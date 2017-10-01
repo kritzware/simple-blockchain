@@ -6,10 +6,12 @@ const Blockchain = class {
   constructor() {
     this.chain = []
     this.current_transactions = []
-    this.new_block = this.newBlock(100, 1)
+    
+    /* Create the genesis block */
+    this.newBlock(100, 1, true)
   }
 
-  newBlock(proof, previous_hash = null) {
+  newBlock(proof, previous_hash = null, is_genesis = false) {
     const block = {
       index: this.chain.length + 1,
       timestamp: moment().format('X'),
@@ -17,6 +19,7 @@ const Blockchain = class {
       proof,
       previous_hash: previous_hash || this.hash(this.chain[0])
     }
+    if(is_genesis) block.genesis = true
     
     this.current_transactions = []
     this.chain.push(block)
@@ -58,7 +61,8 @@ const Blockchain = class {
     const guess = `${last_proof}${proof}`
     const hash = createHash('sha256')
     const hashed_guess = hash.update(guess).digest('hex')
-    return hashed_guess.substr(hashed_guess.length - 4) === '0000'
+    console.log(proof, hashed_guess)
+    return hashed_guess.substr(hashed_guess.length - 4) === '00000'
   }
 
 }
